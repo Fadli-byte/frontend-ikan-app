@@ -1,0 +1,154 @@
+<!-- HEADER -->
+<header class="header" id="header">
+  <div class="logo-section">
+    <div class="logo-icon">
+      <img src="/logob.png" alt="Logo" style="width: 120px; height: auto;">
+    </div>
+    <div class="logo-text">
+      <span class="main-title">SeaNergy</span>
+      <span class="subtitle">Pulau Tunda, Banten</span>
+    </div>
+  </div>
+
+  <div class="top-bar" id="topBar">
+    <% if (typeof user !== 'undefined' && user) { %>
+      <div class="user-greeting">
+        <span class="greeting-text">Halo, <%= user.username %>!</span>
+      </div>
+    <% } %>
+    <a href="/home" class="menu-link">HOME</a>
+    <details id="ekosistemDetails" class="dropdown-menu">
+      <summary>EKOSISTEM</summary>
+      <ul>
+        <li><a href="/mangrove2019"><i class="fas fa-tree"></i> Mangrove</a></li>
+        <li><a href="/lamun2019"><i class="fas fa-leaf"></i> Lamun</a></li>
+        <li><a href="/terumbu2019"><i class="fas fa-gem"></i> Terumbu Karang</a></li>
+        <li><a href="/zpi"><i class="fas fa-fish"></i> Ikan</a></li>
+      </ul>
+    </details>
+    <details id="prediksiDetails" class="dropdown-menu">
+      <summary>PREDIKSI</summary>
+      <ul>
+        <li><a href="/prediksimangrove"><i class="fas fa-tree"></i> Mangrove</a></li>
+        <li><a href="/prediksilamun"><i class="fas fa-leaf"></i> Lamun</a></li>
+        <li><a href="/prediksiterumbu"><i class="fas fa-gem"></i> Terumbu Karang</a></li>
+        <li><a href="/zpi"><i class="fas fa-fish"></i> Ikan</a></li>
+      </ul>
+    </details>
+    <details id="faqDetails" class="dropdown-menu">
+      <summary>FAQ</summary>
+      <ul>
+        <li><a href="/faq"><i class="fas fa-robot"></i> BADU AI</a></li>
+        <li><a href="/voice"><i class="fas fa-language"></i> Translate</a></li>
+        <li><a href="/kamera-ikan"><i class="fas fa-camera"></i> Kamera</a></li>
+        <li><a href="/artikel"><i class="fas fa-newspaper"></i> Artikel Populer</a></li>
+      </ul>
+    </details>
+    <a href="/logout" class="logout menu-link" onclick="return confirm('Apakah Anda yakin ingin logout?')">LOGOUT</a>
+    <a href="/login-admin" class="menu-link">LOGIN ADMIN</a>
+  </div>
+</header>
+
+<!-- HEADER CSS -->
+<style>
+.header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  width: 100%;
+  background: linear-gradient(-45deg, rgba(255,255,255,0.98), rgba(240,250,250,0.98));
+  background-size: 400% 400%;
+  backdrop-filter: blur(25px) saturate(200%);
+  box-shadow: 0 10px 40px rgba(0, 180, 166, 0.15), 0 0 30px rgba(0,229,208,0.1);
+  z-index: 1000;
+  border-bottom: 3px solid rgba(0, 180, 166, 0.2);
+  animation: headerShimmer 6s ease-in-out infinite;
+  height: 100px;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; width: 100%; height: 4px;
+  background: linear-gradient(90deg, #00b4a6 0%, #00e5d0 25%, #006b8c 50%, #00e5d0 75%, #00b4a6 100%);
+  background-size: 300% 100%;
+  animation: gradientFlow 6s linear infinite;
+  box-shadow: 0 0 15px rgba(0,229,208,0.4);
+}
+.logo-section { display: flex; align-items: center; gap: 16px; }
+.logo-icon { width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; }
+.logo-icon img { width: 100%; height: 100%; object-fit: contain; }
+.logo-text { display: flex; flex-direction: column; gap: 2px; }
+.logo-text .main-title { font-size: 1.3rem; font-weight: 900; color: #222; text-transform: uppercase; }
+.logo-text .subtitle { font-size: 0.78rem; color: #555; font-weight: 600; }
+.top-bar { display: flex; align-items: center; gap: 14px; margin-left: auto; z-index: 1; }
+.user-greeting { padding: 11px 20px; background: linear-gradient(135deg, rgba(0,180,166,0.1), rgba(0,229,208,0.12)); border-radius: 12px; font-weight: 700; color: #00b4a6; font-size: 0.92rem; border: 2px solid rgba(0,180,166,0.2);}
+.top-bar a, .top-bar details summary {
+  color: #222; text-decoration: none; padding: 11px 20px; font-size: 0.92rem; font-weight: 700; text-transform: uppercase; cursor: pointer; border-radius: 12px; white-space: nowrap;
+}
+.top-bar a:hover, .top-bar details summary:hover {
+  color: #00b4a6; background: linear-gradient(135deg,rgba(0,180,166,0.1),rgba(0,229,208,0.12)); transform: translateY(-3px);
+}
+.top-bar details { position: relative; }
+.top-bar details summary { list-style: none; display: flex; align-items: center; gap: 6px; }
+.top-bar details summary::after { content: '▼'; font-size: 0.7rem; margin-left: 6px; transition: transform 0.5s; }
+.top-bar details[open] summary::after { transform: rotate(180deg); }
+.top-bar details ul {
+  position: absolute; top: calc(100% + 8px); left: 0; background: rgba(255,255,255,0.98); backdrop-filter: blur(25px); box-shadow: 0 15px 50px rgba(0,180,166,0.25); border-radius: 18px; min-width: 240px; overflow: hidden; list-style: none; padding: 14px 0; animation: fadeInUp 0.5s; border: 2px solid rgba(0,180,166,0.2); z-index: 1001; margin: 0;
+}
+.top-bar details ul li a {
+  display: block; padding: 13px 24px; color: #222; text-decoration: none; font-size: 0.92rem; transition: all 0.4s;
+}
+.top-bar details ul li a:hover {
+  background: linear-gradient(90deg, #00b4a6, #006b8c); color: #fff; padding-left: 36px; transform: translateX(6px);
+}
+.logout {
+  background: linear-gradient(135deg,#dc3545,#c82333) !important; color: white !important; padding: 11px 24px !important; border-radius: 28px; font-weight: 800; box-shadow: 0 6px 20px rgba(220,53,69,0.4);
+}
+.logout:hover { background: linear-gradient(135deg,#c82333,#a71d2a) !important; }
+.top-bar a[href="/login-admin"] { background: linear-gradient(135deg,#00b4a6,#006b8c) !important; color: #fff !important; padding: 11px 24px !important; border-radius: 28px; font-weight: 800;}
+.top-bar a[href="/login-admin"]:hover { background: linear-gradient(135deg,#006b8c,#003d52) !important; }
+@keyframes headerShimmer { 0%, 100%{background-position:0% 50%;} 50%{background-position:100% 50%;} }
+@keyframes gradientFlow { 0%{background-position:0% 0%;} 100%{background-position:300% 0%;} }
+@keyframes fadeInUp { from {opacity:0;transform:translateY(30px);} to {opacity:1;transform:translateY(0);} }
+@media (max-width: 768px) {
+  .header { height: 80px; padding: 0 20px;}
+  .logo-icon { width: 60px; height: 60px;}
+  .logo-text .main-title { font-size: 1rem;}
+  .logo-text .subtitle { font-size: 0.7rem;}
+  .top-bar { gap: 8px;}
+  .top-bar a, .top-bar details summary { padding: 8px 12px; font-size: 0.8rem;}
+  .user-greeting { display: none; }
+}
+</style>
+
+<!-- HEADER JS -->
+<script>
+const header = document.getElementById('header');
+window.addEventListener('scroll', () => {
+  if (window.pageYOffset > 50) { header.classList.add('scrolled'); }
+  else { header.classList.remove('scrolled'); }
+});
+const ekosistemDetails = document.getElementById('ekosistemDetails');
+const prediksiDetails = document.getElementById('prediksiDetails');
+const faqDetails = document.getElementById('faqDetails');
+let closeTimer;
+function closeDropdowns() {
+  ekosistemDetails.removeAttribute('open');
+  prediksiDetails.removeAttribute('open');
+  faqDetails.removeAttribute('open');
+}
+function setupDropdownHover(details) {
+  details.addEventListener('mouseleave', () => { closeTimer = setTimeout(closeDropdowns, 300); });
+  details.addEventListener('mouseenter', () => { clearTimeout(closeTimer); });
+}
+const dropdowns = document.querySelectorAll('.dropdown-menu');
+document.addEventListener('click', (e) => {
+  dropdowns.forEach(details => { if (!details.contains(e.target)) { details.removeAttribute('open'); } });
+});
+setupDropdownHover(ekosistemDetails);
+setupDropdownHover(prediksiDetails);
+setupDropdownHover(faqDetails);
+</script>

@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Infinite Menu Jurnal Pulau Tunda</title>
+  <link rel="preconnect" href="https://images.unsplash.com" />
+  <style>
+    /* ====== RESET SINGKAT ====== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #050510;
+      color: #f9fafb;
+      overflow-x: hidden;
+    }
+
+    /* ====== HEADER DENGAN FOTO UNSPLASH ====== */
+    .hero-header {
+      position: relative;
+      height: 55vh;
+      min-height: 320px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    .hero-header::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80");
+      background-size: cover;
+      background-position: center;
+      filter: grayscale(0.2) contrast(1.1);
+      transform: scale(1.1);
+    }
+    .hero-header::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(15,23,42,0.2), transparent 50%)
+                  ,linear-gradient(to bottom, rgba(5,5,16,0.1), #050510);
+    }
+    .hero-content {
+      position: relative;
+      max-width: 720px;
+      z-index: 1;
+    }
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.85);
+      border: 1px solid rgba(148,163,184,0.35);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #e5e7eb;
+      margin-bottom: 0.9rem;
+    }
+    .hero-title {
+      font-size: 2.4rem;
+      line-height: 1.15;
+      font-weight: 800;
+      margin-bottom: 0.6rem;
+      text-shadow: 0 10px 35px rgba(0,0,0,0.8);
+    }
+    .hero-subtitle {
+      font-size: 0.96rem;
+      color: #e5e7eb;
+      opacity: 0.9;
+    }
+
+    /* ====== WRAPPER INFINITE MENU ====== */
+    .infinite-wrapper {
+      min-height: 100vh;
+      padding: 3rem 0 4rem;
+      background: radial-gradient(circle at top, #0b1020, #02010b 55%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .infinite-inner {
+      width: 100%;
+      max-width: 1200px;
+      border-radius: 28px;
+      border: 1px solid rgba(148,163,184,0.3);
+      background: radial-gradient(circle at top, #050510, #020008 70%);
+      padding: 2.5rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ====== TRACK & ITEM ====== */
+    .menu-track {
+      display: flex;
+      align-items: center;
+      gap: 4.5rem;
+      position: relative;
+      will-change: transform;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .menu-item {
+      position: relative;
+      flex: 0 0 480px;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      align-items: center;
+      gap: 1.5rem;
+      color: #f9fafb;
+    }
+
+    .bubble-wrapper {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 0 auto;
+      box-shadow:
+        0 0 0 1px rgba(148,163,184,0.55),
+        0 20px 45px rgba(0,0,0,0.75);
+      background: #020617;
+    }
+    .bubble-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(1) contrast(1.15);
+      transform-origin: center;
+      transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), filter 0.8s;
+    }
+
+    .menu-item.active .bubble-image {
+      transform: scale(1.05);
+      filter: grayscale(0.3) contrast(1.05);
+    }
+
+    .bubble-button {
+      position: absolute;
+      left: 50%;
+      bottom: 14px;
+      transform: translateX(-50%);
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+      background: #4f46e5;
+      border: 2px solid rgba(15,23,42,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #f9fafb;
+      font-size: 1.1rem;
+      box-shadow: 0 10px 25px rgba(79,70,229,0.8);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .bubble-button:hover {
+      transform: translateX(-50%) translateY(-2px);
+      box-shadow: 0 18px 35px rgba(79,70,229,1);
+    }
+
+    .menu-text-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .menu-kategori {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #a5b4fc;
+    }
+    .menu-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+    }
+    .menu-meta {
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+    .menu-desc {
+      font-size: 0.85rem;
+      color: #e5e7eb;
+      opacity: 0.88;
+    }
+
+    /* indikator kecil di bawah */
+    .menu-indicators {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.8rem;
+    }
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #4b5563;
+      opacity: 0.6;
+      transition: transform 0.2s, opacity 0.2s, background 0.2s;
+    }
+    .dot.active {
+      background: #a5b4fc;
+      opacity: 1;
+      transform: scale(1.6);
+    }
+
+    @media (max-width: 900px) {
+      .menu-item {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+      }
+      .menu-text-block {
+        align-items: center;
+      }
+      .bubble-wrapper {
+        width: 220px;
+        height: 220px;
+      }
+      .hero-title {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER FOTO -->
+  <header class="hero-header">
+    <div class="hero-content">
+      <div class="hero-pill">
+        📚 Pulau Tunda Research Hub
+      </div>
+      <h1 class="hero-title">Kumpulan Jurnal Ilmiah Pulau Tunda</h1>
+      <p class="hero-subtitle">
+        Jelajahi artikel tentang terumbu karang, lamun, mangrove, dan dinamika sosial ekonomi
+        di Pulau Tunda dalam satu tampilan interaktif bergaya Infinite Menu.
+      </p>
+    </div>
+  </header>
+
+  <!-- INFINITE MENU JURNAL -->
+  <main class="infinite-wrapper">
+    <section class="infinite-inner">
+      <div id="menuTrack" class="menu-track">
+        <!-- Item akan di-generate oleh JavaScript -->
+      </div>
+      <div id="menuDots" class="menu-indicators"></div>
+    </section>
+  </main>
+
+  <script>
+    // ====== DATA JURNAL PULAU TUNDA ======
+    // Ganti / tambah item sesuai daftar jurnal asli kamu
+    const jurnalItems = [
+      {
+        id: 1,
+        title: "Kesehatan Terumbu Karang Pulau Tunda",
+        kategori: "Terumbu Karang",
+        tahun: "2023",
+        jurnal: "Jurnal Oseanografi Tropis",
+        img: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=900&q=80",
+        url: "#",
+        desc: "Analisis tutupan karang hidup, rubble, dan parameter oseanografi untuk menilai status kesehatan terumbu karang Pulau Tunda."
+      },
+      {
+        id: 2,
+        title: "Keanekaragaman Ikan Karang dan Habitat",
+        kategori: "Ikan Karang",
+        tahun: "2022",
+        jurnal: "Marine Biodiversity Reports",
+        img: "https://images.unsplash.com/photo-1544550282-8b0465f59681?auto=format&fit=crop&w=900&q=80",
+        url: "#",
+        desc: "Studi Underwater Visual Census (UVC) untuk memetakan keanekaragaman ikan karang dan kaitannya dengan struktur habitat."
+      },
+      {
+        id: 3,
+        title: "Sebaran Lamun dari Sentinel‑2A",
+        kategori: "Lamun",
+        tahun: "2021",
+        jurnal: "Remote Sensing of Coastal Waters",
+        img: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=900&q=80",
+        url: "#",
+        desc: "Integrasi citra Sentinel‑2A dan survei lapangan untuk memetakan sebaran lamun dan kualitas habitat di zona pesisir Pulau Tunda."
+      },
+      {
+        id: 4,
+        title: "Biomassa dan Stok Karbon Mangrove",
+        kategori: "Mangrove",
+        tahun: "2024",
+        jurnal: "Journal of Blue Carbon",
+        img: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=900&q=80",
+        url: "#",
+        desc: "Perhitungan biomassa dan stok karbon mangrove menggunakan persamaan allometrik dan indeks vegetasi NDVI dari Sentinel‑2."
+      },
+      {
+        id: 5,
+        title: "Wisata Bahari Berbasis Konservasi",
+        kategori: "Sosial & Pariwisata",
+        tahun: "2020",
+        jurnal: "Journal of Coastal Community",
+        img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80",
+        url: "#",
+        desc: "Kajian kolaborasi nelayan, pemerintah, dan wisatawan dalam mengembangkan wisata bahari berkelanjutan di Pulau Tunda."
+      }
+    ];
+
+    // ====== GENERATE HTML ITEM ======
+    const track = document.getElementById("menuTrack");
+    const dotsContainer = document.getElementById("menuDots");
+
+    function createItem(j, index) {
+      const item = document.createElement("article");
+      item.className = "menu-item";
+      if (index === 0) item.classList.add("active");
+
+      item.innerHTML = `
+        <div class="bubble-wrapper">
+          <img src="${j.img}" alt="${j.title}" class="bubble-image" loading="lazy" />
+          <a href="${j.url}" class="bubble-button" title="Buka jurnal">
+            ↗
+          </a>
+        </div>
+        <div class="menu-text-block">
+          <span class="menu-kategori">${j.kategori} • ${j.tahun}</span>
+          <h2 class="menu-title">${j.title}</h2>
+          <p class="menu-meta">${j.jurnal}</p>
+          <p class="menu-desc">${j.desc}</p>
+        </div>
+      `;
+      return item;
+    }
+
+    // duplikasi untuk efek “infinite”
+    const menuData = [...jurnalItems, ...jurnalItems];
+
+    menuData.forEach((j, idx) => {
+      const el = createItem(j, idx === 0 ? 0 : -1);
+      track.appendChild(el);
+    });
+
+    // indikator titik hanya untuk jumlah asli
+    jurnalItems.forEach((_, i) => {
+      const dot = document.createElement("div");
+      dot.className = "dot" + (i === 0 ? " active" : "");
+      dotsContainer.appendChild(dot);
+    });
+
+    const dots = Array.from(dotsContainer.querySelectorAll(".dot"));
+    const items = Array.from(track.querySelectorAll(".menu-item"));
+
+    // ====== LOGIKA SCROLL HORIZONTAL “INFINITE” ======
+    let currentIndex = 0;
+    let offset = 0;
+    const itemWidth = 480 + 72; // lebar item + gap (px), sesuaikan dengan CSS
+    let isDragging = false;
+    let startX = 0;
+    let startOffset = 0;
+
+    function updateActive() {
+      const realIndex = ((currentIndex % jurnalItems.length) + jurnalItems.length) % jurnalItems.length;
+
+      items.forEach((it, i) => {
+        it.classList.toggle("active", i === currentIndex);
+      });
+
+      dots.forEach((d, i) => {
+        d.classList.toggle("active", i === realIndex);
+      });
+    }
+
+    function updateTransform() {
+      track.style.transform = `translateX(${offset}px)`;
+    }
+
+    function snapToNearest() {
+      currentIndex = Math.round(-offset / itemWidth);
+      offset = -currentIndex * itemWidth;
+      updateTransform();
+      updateActive();
+    }
+
+    // drag dengan mouse (atau sentuh)
+    track.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      startX = e.clientX;
+      startOffset = offset;
+      track.style.cursor = "grabbing";
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      const delta = e.clientX - startX;
+      offset = startOffset + delta;
+      updateTransform();
+    });
+
+    window.addEventListener("mouseup", () => {
+      if (!isDragging) return;
+      isDragging = false;
+      track.style.cursor = "grab";
+      snapToNearest();
+    });
+
+    // support swipe di mobile
+    track.addEventListener("touchstart", (e) => {
+      isDragging = true;
+      startX = e.touches[0].clientX;
+      startOffset = offset;
+    });
+    track.addEventListener("touchmove", (e) => {
+      if (!isDragging) return;
+      const delta = e.touches[0].clientX - startX;
+      offset = startOffset + delta;
+      updateTransform();
+    });
+    track.addEventListener("touchend", () => {
+      if (!isDragging) return;
+      isDragging = false;
+      snapToNearest();
+    });
+
+    // scroll wheel horizontal
+    track.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      offset -= e.deltaY * 0.6;
+      updateTransform();
+      snapToNearest();
+    }, { passive: false });
+
+    // autoplay pelan seperti React Bits
+    let autoTimer = null;
+    function startAuto() {
+      autoTimer = setInterval(() => {
+        currentIndex = (currentIndex + 1) % menuData.length;
+        offset = -currentIndex * itemWidth;
+        updateTransform();
+        updateActive();
+      }, 4500);
+    }
+    function stopAuto() {
+      if (autoTimer) clearInterval(autoTimer);
+    }
+    startAuto();
+
+    track.addEventListener("mouseenter", stopAuto);
+    track.addEventListener("mouseleave", startAuto);
+  </script>
+</body><!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jurnal Pulau Tunda – Infinite Globe Menu</title>
+  <style>
+    :root {
+      --bg-dark: #050509;
+      --accent: #7c3aed;
+      --text: #ffffff;
+      --muted: #9ca3af;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    .globe-header {
+      padding: 20px 40px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: radial-gradient(circle at top left, #1a1a2e 0%, #050509 60%);
+    }
+
+    .globe-header-inner {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .globe-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      object-fit: cover;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .globe-title h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .globe-title p {
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    /* Main Scene */
+    .globe-main {
+      padding: 40px 20px;
+      min-height: calc(100vh - 120px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .globe-scene {
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
+      height: 600px;
+      perspective: 1400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Globe Container (3D space) */
+    .globe-container {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      transform-style: preserve-3d;
+      animation: globeRotate 60s linear infinite;
+    }
+
+    @keyframes globeRotate {
+      0% {
+        transform: rotateY(0deg) rotateX(10deg);
+      }
+      100% {
+        transform: rotateY(360deg) rotateX(10deg);
+      }
+    }
+
+    .globe-scene:hover .globe-container {
+      animation-play-state: paused;
+    }
+
+    /* Circle Item (Orbit dalam globe) */
+    .globe-circle {
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background: #000;
+    }
+
+    .globe-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .globe-circle:hover {
+      transform: scale(1.15) translateZ(50px) !important;
+      box-shadow: 0 30px 80px rgba(124, 58, 237, 0.6);
+    }
+
+    /* Active panel (teks di tengah/kanan bawah seperti di screenshot) */
+    .globe-active-panel {
+      position: absolute;
+      bottom: 60px;
+      right: 80px;
+      max-width: 360px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .globe-active-panel h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      line-height: 1.2;
+      text-shadow: 0 8px 30px rgba(0,0,0,0.9);
+    }
+
+    .globe-active-panel p {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .globe-btn {
+      padding: 12px 32px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      pointer-events: all;
+      box-shadow: 0 10px 30px rgba(124,58,237,0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .globe-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 40px rgba(124,58,237,0.7);
+    }
+
+    .globe-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .globe-container {
+        width: 400px;
+        height: 400px;
+      }
+
+      .globe-circle {
+        width: 140px;
+        height: 140px;
+      }
+
+      .globe-active-panel {
+        bottom: 40px;
+        right: 40px;
+        max-width: 280px;
+      }
+
+      .globe-active-panel h2 {
+        font-size: 2rem;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .globe-main {
+        padding: 20px;
+      }
+
+      .globe-container {
+        width: 320px;
+        height: 320px;
+      }
+
+      .globe-circle {
+        width: 100px;
+        height: 100px;
+      }
+
+      .globe-active-panel {
+        position: static;
+        text-align: center;
+        margin-top: 320px;
+      }
+
+      .globe-active-panel h2 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="globe-header">
+    <div class="globe-header-inner">
+      <img 
+        src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=120&q=80" 
+        alt="Logo Pulau Tunda" 
+        class="globe-logo" 
+      />
+      <div class="globe-title">
+        <h1>Jurnal Pulau Tunda</h1>
+        <p>Kumpulan artikel ilmiah ekosistem laut</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Globe Container -->
+  <main class="globe-main">
+    <section class="globe-scene">
+      <div class="globe-container" id="globeContainer">
+        <!-- Circles will be injected by JS -->
+      </div>
+
+      <!-- Active Panel (judul + deskripsi seperti di screenshot) -->
+      <div class="globe-active-panel">
+        <h2 id="globeTitle">Terumbu Karang</h2>
+        <p id="globeDesc">Analisis tutupan karang hidup dan tekanan antropogenik di Pulau Tunda, Banten</p>
+        <button class="globe-btn" id="globeBtn">Lihat Detail</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Data jurnal (bisa diganti dengan fetch dari server / API)
+    const journals = [
+      {
+        title: "Terumbu Karang",
+        desc: "Analisis tutupan karang hidup dan tekanan antropogenik di Pulau Tunda, Banten",
+        img: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=800&q=80",
+        link: "/jurnal/terumbu-karang"
+      },
+      {
+        title: "Padang Lamun",
+        desc: "Pemetaan sebaran lamun dengan Sentinel-2 dan survei lapangan",
+        img: "https://images.unsplash.com/photo-1505765050516-f72dcac9c60e?auto=format&fit=crop&w=800&q=80",
+        link: "/jurnal/lamun"
+      },
+      {
+        title: "Mangrove & Karbon",
+        desc: "Estimasi biomassa dan stok karbon mangrove di pesisir Pulau Tunda",
+        img: "https://images.unsplash.com/photo-1533557188897-0035413c8f51?auto=format&fit=crop&w=800&q=80",
+        link: "/jurnal/mangrove"
+      },
+      {
+        title: "Ikan Karang",
+        desc: "Keanekaragaman ikan karang sebagai indikator kesehatan terumbu",
+        img: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=800&q=80",
+        link: "/jurnal/ikan-karang"
+      },
+      {
+        title: "Wisata Bahari",
+        desc: "Kesesuaian kawasan untuk wisata bahari berbasis konservasi",
+        img: "https://images.unsplash.com/photo-1493558103817-58b2924bce98?auto=format&fit=crop&w=800&q=80",
+        link: "/jurnal/wisata"
+      },
+      {
+        title: "Mikroplastik Laut",
+        desc: "Studi distribusi mikroplastik di perairan Pulau Tunda",
+        img: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=800&q=80",
+        link: "/jurnal/mikroplastik"
+      },
+      {
+        title: "Oseanografi Fisik",
+        desc: "Analisis parameter oseanografi: suhu, salinitas, dan arus laut",
+        img: "https://images.unsplash.com/photo-1484821582734-6c6c9f99a672?auto=format&fit=crop&w=800&q=80",
+        link: "/jurnal/oseanografi"
+      },
+      {
+        title: "Perikanan Tangkap",
+        desc: "Pola penangkapan ikan berkelanjutan di sekitar Pulau Tunda",
+        img: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80",
+        link: "/jurnal/perikanan"
+      }
+    ];
+
+    const container = document.getElementById("globeContainer");
+    const titleEl = document.getElementById("globeTitle");
+    const descEl = document.getElementById("globeDesc");
+    const btnEl = document.getElementById("globeBtn");
+
+    let currentIndex = 0;
+
+    // Fungsi untuk distribute circles dalam bentuk sphere (globe)
+    function createGlobeCircles() {
+      const radius = 250; // jarak dari pusat globe
+
+      journals.forEach((journal, i) => {
+        const circle = document.createElement("div");
+        circle.className = "globe-circle";
+        circle.dataset.index = i;
+
+        const img = document.createElement("img");
+        img.src = journal.img;
+        img.alt = journal.title;
+        circle.appendChild(img);
+
+        // Hitung posisi 3D (simplified sphere distribution)
+        const angle = (i / journals.length) * Math.PI * 2;
+        const elevation = (Math.random() - 0.5) * Math.PI; // variasi vertikal
+
+        const x = radius * Math.cos(angle) * Math.cos(elevation);
+        const y = radius * Math.sin(elevation);
+        const z = radius * Math.sin(angle) * Math.cos(elevation);
+
+        circle.style.transform = `translate3d(${x}px, ${y}px, ${z}px)`;
+
+        circle.addEventListener("click", () => {
+          currentIndex = i;
+          updateActivePanel();
+          // Uncomment untuk redirect:
+          // window.location.href = journal.link;
+        });
+
+        circle.addEventListener("mouseenter", () => {
+          currentIndex = i;
+          updateActivePanel();
+        });
+
+        container.appendChild(circle);
+      });
+    }
+
+    // Update panel teks aktif
+    function updateActivePanel() {
+      const journal = journals[currentIndex];
+      titleEl.textContent = journal.title;
+      descEl.textContent = journal.desc;
+      btnEl.onclick = () => {
+        window.location.href = journal.link;
+      };
+    }
+
+    // Init
+    createGlobeCircles();
+    updateActivePanel();
+
+    // Opsional: navigasi keyboard
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight") {
+        currentIndex = (currentIndex + 1) % journals.length;
+        updateActivePanel();
+      } else if (e.key === "ArrowLeft") {
+        currentIndex = (currentIndex - 1 + journals.length) % journals.length;
+        updateActivePanel();
+      }
+    });
+  </script>
+</body>
+</html>
+
+</html>
